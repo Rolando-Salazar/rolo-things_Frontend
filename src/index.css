@@ -240,6 +240,28 @@ body {
   box-shadow: var(--shadow-sm);
 }
 
+.delete-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  /* Color gris sutil al principio */
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: var(--radius-md);
+  opacity: 1;
+  /* Siempre visible ahora */
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.delete-btn:hover {
+  color: var(--danger-color);
+  /* Se vuelve rojo al pasar el mouse */
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
 .task-checkbox {
   width: 1.25rem;
   height: 1.25rem;

@@ -3,7 +3,7 @@ import {
     PieChart, Pie, Cell, ResponsiveContainer,
     BarChart, Bar, XAxis, Tooltip
 } from 'recharts';
-import { Check, Flame, Plus } from 'lucide-react';
+import { Check, Flame, Plus, Trash2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
 const COLORS = ['var(--accent-color)', 'var(--gray-200)'];
@@ -94,6 +94,26 @@ export default function TodayDashboard({ session }: { session: any }) {
             setTasks([data[0], ...tasks]);
             setStats(prev => ({ ...prev, total: prev.total + 1 }));
             setNewTaskTitle('');
+        }
+    };
+
+    const deleteTask = async (taskId: string) => {
+        // Optimistic update
+        const taskToDelete = tasks.find(t => t.id === taskId);
+        setTasks(tasks.filter(t => t.id !== taskId));
+        setStats(prev => ({
+            total: prev.total - 1,
+            completed: taskToDelete?.is_completed ? prev.completed - 1 : prev.completed
+        }));
+
+        const { error } = await supabase
+            .from('tasks')
+            .delete()
+            .eq('id', taskId);
+
+        if (error) {
+            console.error('Error deleting task:', error);
+            fetchTasks(); // Revert on error
         }
     };
 
@@ -222,6 +242,31 @@ export default function TodayDashboard({ session }: { session: any }) {
                                         )}
                                     </div>
                                 </div>
+
+                                <button
+                                    className="delete-btn"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        deleteTask(task.id);
+                                    }}
+                                    title="Delete task"
+                                    style={{
+                                        color: '#ef4444',
+                                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                                        border: '1px solid #ef4444',
+                                        padding: '6px 10px',
+                                        borderRadius: '6px',
+                                        opacity: 1,
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        cursor: 'pointer',
+                                        minWidth: '32px',
+                                        minHeight: '32px'
+                                    }}
+                                >
+                                    <Trash2 size={18} color="#ef4444" />
+                                </button>
                             </div>
                         ))}
                     </div>

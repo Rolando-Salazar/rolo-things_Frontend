@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { supabase } from '../lib/supabase';
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, Github } from 'lucide-react';
 
 export default function Auth() {
     const [loading, setLoading] = useState(false);
@@ -26,6 +26,23 @@ export default function Auth() {
         } catch (error: any) {
             setErrorMsg(error.message || 'An error occurred during authentication.');
         } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleGithubLogin = async () => {
+        setLoading(true);
+        setErrorMsg('');
+        try {
+            const { error } = await supabase.auth.signInWithOAuth({
+                provider: 'github',
+                options: {
+                    redirectTo: window.location.origin
+                }
+            });
+            if (error) throw error;
+        } catch (error: any) {
+            setErrorMsg(error.message || 'An error occurred during GitHub authentication.');
             setLoading(false);
         }
     };
@@ -78,6 +95,34 @@ export default function Auth() {
                         {loading ? 'Processing...' : (isSignUp ? 'Sign Up' : 'Log In')}
                     </button>
                 </form>
+
+                <div style={{ margin: '1.5rem 0', display: 'flex', alignItems: 'center', textAlign: 'center', color: 'var(--text-secondary)' }}>
+                    <hr style={{ flex: 1, border: 'none', borderTop: '1px solid var(--border-color)' }} />
+                    <span style={{ padding: '0 10px', fontSize: '0.875rem' }}>or</span>
+                    <hr style={{ flex: 1, border: 'none', borderTop: '1px solid var(--border-color)' }} />
+                </div>
+
+                <button
+                    onClick={handleGithubLogin}
+                    disabled={loading}
+                    style={{
+                        width: '100%',
+                        padding: '0.75rem',
+                        borderRadius: 'var(--radius-md)',
+                        border: '1px solid var(--border-color)',
+                        backgroundColor: 'var(--bg-primary)',
+                        color: 'var(--text-primary)',
+                        fontWeight: 600,
+                        cursor: loading ? 'not-allowed' : 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '0.5rem'
+                    }}
+                >
+                    <Github size={20} />
+                    Continue with GitHub
+                </button>
 
                 <div style={{ textAlign: 'center', marginTop: '1.5rem' }}>
                     <button
