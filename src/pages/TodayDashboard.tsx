@@ -3,7 +3,7 @@ import {
     PieChart, Pie, Cell, ResponsiveContainer,
     BarChart, Bar, XAxis, Tooltip
 } from 'recharts';
-import { Check, Flame, MessageSquare, Paperclip, Clock, Plus } from 'lucide-react';
+import { Check, Flame, Plus } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
 const COLORS = ['var(--accent-color)', 'var(--gray-200)'];
@@ -21,7 +21,7 @@ export default function TodayDashboard({ session }: { session: any }) {
     const fetchTasks = async () => {
         try {
             setLoading(true);
-            const today = new Date().toISOString().split('T')[0];
+
 
             // Get user's today's tasks
             const { data, error } = await supabase
